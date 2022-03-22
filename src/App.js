@@ -20,58 +20,87 @@ import watchCase7 from './images/watch-case-7.png';
 import watchCase8 from './images/watch-case-8.png';
 import watchCase9 from './images/watch-case-9.png';
 
-import { useState } from 'react';
+import { useReducer } from 'react';
+
+const initState = {
+  marginTop: 0,
+  marginLeft: 0,
+  showTopBtn: true,
+  showBottomBtn: true,
+  showLeftBtn: true,
+  showRightBtn: true,
+};
+
+const handlerClickTop = (state) => {
+  const marginTop = state.marginTop - 400;
+  let showTopBtn = true;
+  if (state.marginTop <= -1200) {
+    showTopBtn = false;
+  }
+  return { ...state, marginTop, showTopBtn, showBottomBtn: true };
+};
+
+const handlerClickBottom = (state) => {
+  const marginTop = state.marginTop + 400;
+  let showBottomBtn = true;
+  if (state.marginTop >= 1200) {
+    showBottomBtn = false;
+  }
+  return { ...state, marginTop, showBottomBtn, showTopBtn: true };
+};
+
+const handlerClickLeft = (state) => {
+  const marginLeft = state.marginLeft + 400;
+  let showLeftBtn = true;
+  if (state.marginLeft >= 1200) {
+    showLeftBtn = false;
+  }
+  return { ...state, marginLeft, showLeftBtn, showRightBtn: true };
+};
+
+const handlerClickRight = (state) => {
+  const marginLeft = state.marginLeft - 400;
+  let showRightBtn = true;
+  if (state.marginLeft <= -1200) {
+    showRightBtn = false;
+  }
+  return { ...state, marginLeft, showRightBtn, showLeftBtn: true };
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'clickTop':
+      return handlerClickTop(state);
+    case 'clickBottom':
+      return handlerClickBottom(state);
+    case 'clickLeft':
+      return handlerClickLeft(state);
+    case 'clickRight':
+      return handlerClickRight(state);
+    default:
+      return state;
+  }
+};
 
 function App() {
-  const [marginTop, setMarginTop] = useState(0);
-  const [marginLeft, setMarginLeft] = useState(0);
-  // const [showTopButton, setShowTopButton] = useState(true);
-  // const [showBottomButton, setShowBottomButton] = useState(true);
-  // const [showLeftButton, setShowLeftButton] = useState(true);
-  // const [showRightButton, setShowRightButton] = useState(true);
-  // console.log(marginTop);
-  // const controlBtnDisplay = () => {
-  //   if (marginTop < -1200) {
-  //     setShowTopButton(false);
-  //   } else {
-  //     setShowTopButton(true);
-  //   }
-  //   if (marginTop > 1200) {
-  //     setShowBottomButton(false);
-  //   } else {
-  //     setShowBottomButton(true);
-  //   }
-  //   if (marginLeft < -1200) {
-  //     setShowRightButton(false);
-  //   } else {
-  //     setShowRightButton(true);
-  //   }
-  //   if (marginLeft > 1200) {
-  //     setShowLeftButton(false);
-  //   } else {
-  //     setShowLeftButton(true);
-  //   }
-  // };
+  const [state, dispatch] = useReducer(reducer, initState);
+
   const controlTopHandler = () => {
-    setMarginTop((pre) => pre - 400);
-    // controlBtnDisplay();
+    dispatch({ type: 'clickTop' });
   };
   const controlBottomHandler = () => {
-    setMarginTop((pre) => pre + 400);
-    // controlBtnDisplay();
+    dispatch({ type: 'clickBottom' });
   };
   const controlLeftHandler = () => {
-    setMarginLeft((pre) => pre + 400);
-    // controlBtnDisplay();
+    dispatch({ type: 'clickLeft' });
   };
   const controlRightHandler = () => {
-    setMarginLeft((pre) => pre - 400);
-    // controlBtnDisplay();
+    dispatch({ type: 'clickRight' });
   };
   return (
     <div className="App">
       <div className="watches">
-        <div className="watch-bands" style={{ marginLeft: marginLeft }}>
+        <div className="watch-bands" style={{ marginLeft: state.marginLeft }}>
           <img src={watchBand1} alt="watch-band" />
           <img src={watchBand2} alt="watch-band" />
           <img src={watchBand3} alt="watch-band" />
@@ -82,7 +111,7 @@ function App() {
           <img src={watchBand8} alt="watch-band" />
           <img src={watchBand9} alt="watch-band" />
         </div>
-        <div className="watch-cases" style={{ marginTop: marginTop }}>
+        <div className="watch-cases" style={{ marginTop: state.marginTop }}>
           <img src={watchCase1} alt="watch-case" />
           <img src={watchCase2} alt="watch-case" />
           <img src={watchCase3} alt="watch-case" />
@@ -94,7 +123,7 @@ function App() {
           <img src={watchCase9} alt="watch-case" />
         </div>
       </div>
-      {/* {showTopButton && (
+      {state.showTopBtn && (
         <button
           className="watch-control watch-control--top "
           onClick={controlTopHandler}
@@ -102,7 +131,7 @@ function App() {
           <i className="fas fa-angle-up"></i>
         </button>
       )}
-      {showBottomButton && (
+      {state.showBottomBtn && (
         <button
           className="watch-control watch-control--bottom "
           onClick={controlBottomHandler}
@@ -110,7 +139,7 @@ function App() {
           <i className="fas fa-angle-down"></i>
         </button>
       )}
-      {showLeftButton && (
+      {state.showLeftBtn && (
         <button
           className="watch-control watch-control--left "
           onClick={controlLeftHandler}
@@ -118,42 +147,15 @@ function App() {
           <i className="fas fa-angle-left"></i>
         </button>
       )}
-      {showRightButton && (
+      {state.showRightBtn && (
         <button
           className="watch-control watch-control--right "
           onClick={controlRightHandler}
         >
           <i className="fas fa-angle-right"></i>
         </button>
-      )} */}
+      )}
 
-      <button
-        className="watch-control watch-control--top "
-        onClick={controlTopHandler}
-      >
-        <i className="fas fa-angle-up"></i>
-      </button>
-
-      <button
-        className="watch-control watch-control--bottom "
-        onClick={controlBottomHandler}
-      >
-        <i className="fas fa-angle-down"></i>
-      </button>
-
-      <button
-        className="watch-control watch-control--left "
-        onClick={controlLeftHandler}
-      >
-        <i className="fas fa-angle-left"></i>
-      </button>
-
-      <button
-        className="watch-control watch-control--right "
-        onClick={controlRightHandler}
-      >
-        <i className="fas fa-angle-right"></i>
-      </button>
       <footer>
         Simple React Slide Animation Demo developed by{' '}
         <a href="https://www.pengfeidevelopment.com">Pengfei Gao</a>
